@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>REGRESSION MODELLING</title>
+
+<script src="site_libs/header-attrs-2.11/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.tab('show');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Day 4</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Statistical Testing and Modeling</a>
+</li>
+<li>
+  <a href="tests.html">STATISTICAL TESTS</a>
+</li>
+<li>
+  <a href="models.html">REGRESSION MODELLING</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">REGRESSION MODELLING</h1>
+
+</div>
+
+
+<style type="text/css">
+  body{
+  font-size: 14pt;
+}
+</style>
+<style type="text/css">
+code.r{
+  font-size: 16px;
+}
+pre {
+  font-size: 16px
+}
+</style>
+<pre class="r"><code># New packages that need to be installed
+install.packages(&quot;gvlma&quot;) #to check assumptions of linear regression
+install.packages(&quot;MASS&quot;) #for negative binomial regression
+install.packages(&quot;censReg&quot;) #for tobit regression</code></pre>
+<div style="margin-bottom:50px;">
+
+</div>
+<pre class="r"><code># Load needed packages
+library(openxlsx)
+library(tidyverse)
+library(gvlma) 
+library(MASS)
+library(censReg)</code></pre>
+<div style="margin-bottom:50px;">
+
+</div>
+<pre class="r"><code># Read data 
+data &lt;- read.xlsx(&quot;Long Data.xlsx&quot;,1)</code></pre>
+<div style="margin-bottom:80px;">
+
+</div>
+<div id="prepare-data" class="section level1">
+<h1>Prepare Data</h1>
+<pre class="r"><code># Preparing some variables for regression
+
+# 1. All scenario variables recoded to 0 and 1 where 1 represents the &quot;X&quot; choice
+ScenarioVars &lt;- grep(&quot;Scenario&quot;,names(data))
+data[,ScenarioVars] &lt;- lapply(data[,ScenarioVars], function(x)ifelse(x==&quot;X&quot;,1,0)  )
+
+# 2. Create dummy variables for gender and financial status
+data$Female &lt;- ifelse(data$Gender==&quot;Female&quot;,1,0)
+
+data$Medium &lt;- ifelse(data$FinancialStatus==&quot;Medium&quot;,1,0)
+data$High &lt;- ifelse(data$FinancialStatus==&quot;High&quot;,1,0)
+
+# 3. Create dummy variables for treatment
+data$Pride &lt;- ifelse(data$Treatment==&quot;Pride&quot;,1,0)
+
+# 4. Create a new variable with the count of times a subject chose option &quot;X&quot; in the vars Scenario1 to Scenario8
+data &lt;- data %&gt;%
+  mutate(CountX = Scenario1+Scenario2+Scenario3+Scenario4+Scenario5+Scenario6+
+                      Scenario7+Scenario8)</code></pre>
+<div style="margin-bottom:80px;">
+
+</div>
+</div>
+<div id="linear-regression" class="section level1">
+<h1>Linear Regression</h1>
+<pre class="r"><code># Fit a linear regression for the dependent variable contribution
+
+linear_model &lt;- lm(Contribution ~ Female + Age + Medium + High + Pride, data=data)
+summary(linear_model)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = Contribution ~ Female + Age + Medium + High + Pride, 
+##     data = data)
+## 
+## Residuals:
+##    Min     1Q Median     3Q    Max 
+## -5.901 -3.229 -1.638  1.897 18.382 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)  2.12253    2.75097   0.772  0.44058    
+## Female      -1.02702    0.37197  -2.761  0.00588 ** 
+## Age          0.05268    0.12452   0.423  0.67236    
+## Medium       0.41884    0.61264   0.684  0.49436    
+## High        -0.53133    0.61905  -0.858  0.39096    
+## Pride        1.99046    0.31254   6.369 3.03e-10 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 4.63 on 902 degrees of freedom
+##   (52 observations deleted due to missingness)
+## Multiple R-squared:  0.06525,    Adjusted R-squared:  0.06007 
+## F-statistic: 12.59 on 5 and 902 DF,  p-value: 7.667e-12</code></pre>
+<div style="margin-bottom:50px;">
+
+</div>
+<p>Linear regression makes several assumptions about the data, such as :</p>
+<ul>
+<li><strong>Linearity of the data:</strong> The relationship between the predictor (x) and the outcome (y) is assumed to be linear.</li>
+<li><strong>Normality of residuals:</strong> The residual errors are assumed to be normally distributed.</li>
+<li><strong>Homogeneity of residuals variance:</strong> The residuals are assumed to have a constant variance (homoscedasticity)</li>
+<li><strong>Independence of residuals error terms.</strong></li>
+</ul>
+<div style="margin-bottom:50px;">
+
+</div>
+<pre class="r"><code># Diagnostic plots
+par(mfrow = c(2, 2))
+plot(linear_model)</code></pre>
+<p><img src="models_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<ul>
+<li><p><strong>Residuals vs Fitted.</strong> Used to check the linear relationship assumptions. A horizontal line, without distinct patterns is an indication for a linear relationship.</p></li>
+<li><p><strong>Normal Q-Q.</strong> Used to examine whether the residuals are normally distributed. It’s good if residuals points follow the straight dashed line.</p></li>
+<li><p><strong>Scale-Location (or Spread-Location).</strong> Used to check the homogeneity of variance of the residuals (homoscedasticity). Horizontal line with equally spread points is a good indication of homoscedasticity.</p></li>
+<li><p><strong>Residuals vs Leverage.</strong> Used to identify influential cases, that is extreme values that might influence the regression results when included or excluded from the analysis.</p></li>
+</ul>
+<p>For more information <a href="http://www.sthda.com/english/articles/39-regression-model-diagnostics/161-linear-regression-assumptions-and-diagnostics-in-r-essentials/">click here</a></p>
+<div style="margin-bottom:50px;">
+
+</div>
+<pre class="r"><code># A second useful function is provided by the gvlma function in the gvlma package which will quickly check 5 assumptions for you.
+
+gvlma(linear_model)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = Contribution ~ Female + Age + Medium + High + Pride, 
+##     data = data)
+## 
+## Coefficients:
+## (Intercept)       Female          Age       Medium         High        Pride  
+##     2.12253     -1.02702      0.05268      0.41884     -0.53133      1.99046  
+## 
+## 
+## ASSESSMENT OF THE LINEAR MODEL ASSUMPTIONS
+## USING THE GLOBAL TEST ON 4 DEGREES-OF-FREEDOM:
+## Level of Significance =  0.05 
+## 
+## Call:
+##  gvlma(x = linear_model) 
+## 
+##                      Value   p-value                   Decision
+## Global Stat        673.628 0.000e+00 Assumptions NOT satisfied!
+## Skewness           386.274 0.000e+00 Assumptions NOT satisfied!
+## Kurtosis           256.479 0.000e+00 Assumptions NOT satisfied!
+## Link Function       22.940 1.671e-06 Assumptions NOT satisfied!
+## Heteroscedasticity   7.934 4.851e-03 Assumptions NOT satisfied!</code></pre>
+<p>For more information <a href="https://www.ianruginski.com/post/regressionassumptions/">click here</a></p>
+<div style="margin-bottom:80px;">
+
+</div>
+</div>
+<div id="logistic-regression" class="section level1">
+<h1>Logistic Regression</h1>
+<pre class="r"><code># Fit a logistic regression for choice of &quot;X&quot; in Scenario 1
+logit_model &lt;- glm(Scenario1 ~ Age + Female + Medium + High, family = binomial(&quot;logit&quot;), data = data)
+
+summary(logit_model)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = Scenario1 ~ Age + Female + Medium + High, family = binomial(&quot;logit&quot;), 
+##     data = data)
+## 
+## Deviance Residuals: 
+##    Min      1Q  Median      3Q     Max  
+## -1.501  -1.302   0.929   1.035   1.340  
+## 
+## Coefficients:
+##             Estimate Std. Error z value Pr(&gt;|z|)   
+## (Intercept) -0.49599    1.20302  -0.412  0.68013   
+## Age          0.01963    0.05435   0.361  0.71794   
+## Female      -0.29101    0.16321  -1.783  0.07458 . 
+## Medium       0.73974    0.26121   2.832  0.00463 **
+## High         0.64235    0.26152   2.456  0.01404 * 
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 1304.1  on 959  degrees of freedom
+## Residual deviance: 1292.3  on 955  degrees of freedom
+## AIC: 1302.3
+## 
+## Number of Fisher Scoring iterations: 4</code></pre>
+<div style="margin-bottom:50px;">
+
+</div>
+<pre class="r"><code>## odds ratios and 95% CI
+exp(cbind(OR = coef(logit_model), confint(logit_model)))</code></pre>
+<pre><code>## Waiting for profiling to be done...</code></pre>
+<pre><code>##                    OR      2.5 %   97.5 %
+## (Intercept) 0.6089675 0.05662796 6.368045
+## Age         1.0198275 0.91731184 1.135554
+## Female      0.7475111 0.54127204 1.026994
+## Medium      2.0953953 1.25972633 3.519868
+## High        1.9009514 1.14209391 3.195014</code></pre>
+<div style="margin-bottom:80px;">
+
+</div>
+</div>
+<div id="negative-binomial-regression" class="section level1">
+<h1>Negative Binomial Regression</h1>
+<pre class="r"><code># Fit a negative binomial regression for CountX
+nb_model &lt;- glm.nb(CountX ~ Age + Female + Medium + High, data = data)
+summary(nb_model)</code></pre>
+<pre><code>## 
+## Call:
+## glm.nb(formula = CountX ~ Age + Female + Medium + High, data = data, 
+##     init.theta = 1.606081009, link = log)
+## 
+## Deviance Residuals: 
+##      Min        1Q    Median        3Q       Max  
+## -2.10391  -1.10456  -0.00541   0.63810   0.99960  
+## 
+## Coefficients:
+##             Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)  1.84919    0.54065   3.420 0.000625 ***
+## Age         -0.02262    0.02438  -0.928 0.353664    
+## Female      -0.09030    0.07241  -1.247 0.212335    
+## Medium       0.16144    0.12131   1.331 0.183269    
+## High         0.18712    0.12153   1.540 0.123621    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for Negative Binomial(1.6061) family taken to be 1)
+## 
+##     Null deviance: 1213.8  on 959  degrees of freedom
+## Residual deviance: 1209.6  on 955  degrees of freedom
+## AIC: 4902.6
+## 
+## Number of Fisher Scoring iterations: 1
+## 
+## 
+##               Theta:  1.606 
+##           Std. Err.:  0.125 
+## 
+##  2 x log-likelihood:  -4890.564</code></pre>
+<div style="margin-bottom:80px;">
+
+</div>
+</div>
+<div id="tobit-regression" class="section level1">
+<h1>Tobit Regression</h1>
+<pre class="r"><code># Fit a tobit model to Contribution with both left and right censoring
+tobit_model &lt;- censReg(Contribution  ~ Age + Female + Medium + High + Pride,
+                  left=0, right=20,
+                  data =data)
+
+summary(tobit_model)</code></pre>
+<pre><code>## 
+## Call:
+## censReg(formula = Contribution ~ Age + Female + Medium + High + 
+##     Pride, left = 0, right = 20, data = data)
+## 
+## Observations:
+##          Total  Left-censored     Uncensored Right-censored 
+##            908            391            496             21 
+## 
+## Coefficients:
+##             Estimate Std. error t value  Pr(&gt; t)    
+## (Intercept)  4.74537    4.80564   0.987   0.3234    
+## Age         -0.20922    0.21839  -0.958   0.3381    
+## Female      -1.58540    0.63949  -2.479   0.0132 *  
+## Medium       1.05533    1.06346   0.992   0.3210    
+## High        -0.60191    1.07819  -0.558   0.5767    
+## Pride        3.31247    0.54573   6.070 1.28e-09 ***
+## logSigma     2.00168    0.03515  56.941  &lt; 2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Newton-Raphson maximisation, 6 iterations
+## Return code 8: successive function values within relative tolerance limit (reltol)
+## Log-likelihood: -2014.797 on 7 Df</code></pre>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = false;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

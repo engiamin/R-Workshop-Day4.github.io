@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Statistical Testing and Modeling</title>
+
+<script src="site_libs/header-attrs-2.11/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.tab('show');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Day 4</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Statistical Testing and Modeling</a>
+</li>
+<li>
+  <a href="tests.html">STATISTICAL TESTS</a>
+</li>
+<li>
+  <a href="models.html">REGRESSION MODELLING</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Statistical Testing and Modeling</h1>
+
+</div>
+
+
+<style type="text/css">
+  body{
+  font-size: 14pt;
+}
+</style>
+<style type="text/css">
+code.r{
+  font-size: 16px;
+}
+pre {
+  font-size: 16px
+}
+</style>
+<div style="margin-bottom:50px;">
+
+</div>
+<div id="statistical-tests" class="section level1">
+<h1>Statistical Tests</h1>
+<p>Statistical tests are of various types, depending upon the nature of the study. Statistical tests provide a method for making quantitative decisions about a particular sample.</p>
+<p>Statistical tests mainly test the hypothesis that is made about the significance of an observed sample.</p>
+<div style="margin-bottom:50px;">
+
+</div>
+<div class="figure" style="text-align: center">
+<img src="stattest.png" alt="Adopted from: [Flow Chart to Determine Appropriate Statistical Test to Analyze Data](https://accesspharmacy.mhmedical.com/content.aspx?sectionid=40428533&amp;bookid=4382)" width="100%" />
+<p class="caption">
+Adopted from: <a href="https://accesspharmacy.mhmedical.com/content.aspx?sectionid=40428533&amp;bookid=4382">Flow Chart to Determine Appropriate Statistical Test to Analyze Data</a>
+</p>
+</div>
+<div style="margin-bottom:50px;">
+
+</div>
+<p><a href="https://stats.idre.ucla.edu/r/whatstat/what-statistical-analysis-should-i-usestatistical-analyses-using-r/">A good source to show how each test is performed in R.</a></p>
+<div style="margin-bottom:80px;">
+
+</div>
+</div>
+<div id="regression-analysis" class="section level1">
+<h1>Regression Analysis</h1>
+<p>Regression analysis is a set of statistical processes for estimating the relationships between a dependent variable (often called the ‘outcome’ or ‘response’ variable) and one or more independent variables (often called ‘predictors’, ‘covariates’, ‘explanatory variables’ or ‘features’).</p>
+<div style="margin-bottom:50px;">
+
+</div>
+<p>There are many different type of regression models.</p>
+<div id="linear-regression" class="section level2">
+<h2><a href="https://web.stanford.edu/~hastie/ISLR2/ISLRv2_website.pdf">Linear Regression</a></h2>
+<p>Linear regression is a type of model where the relationship between an independent variable and dependent variables is assumed to be linear.</p>
+<ul>
+<li>Dependent variable: continuous</li>
+<li>Independent variables: any type</li>
+</ul>
+<div style="margin-bottom:70px;">
+
+</div>
+</div>
+<div id="logistic-regression" class="section level2">
+<h2><a href="https://stats.idre.ucla.edu/r/dae/logit-regression/">Logistic Regression</a></h2>
+<p>Logistic regression is used to estimate the probability of certain events that are mutually exclusive, for example, happy/sad, normal/abnormal, or pass/fail. The value of probability strictly ranges between 0 and 1.</p>
+<ul>
+<li>Dependent variable: binary (0 and 1)</li>
+<li>Independent variables: any type</li>
+</ul>
+<div style="margin-bottom:70px;">
+
+</div>
+</div>
+<div id="poisson-regression" class="section level2">
+<h2><a href="https://stats.idre.ucla.edu/r/dae/poisson-regression/">Poisson Regression</a></h2>
+<p>Poisson regression is a generalized linear model form of regression analysis used to model count data and contingency tables. A Poisson regression model is sometimes known as a log-linear model, especially when used to model contingency tables.</p>
+<ul>
+<li>Dependent variable: count that has poisson distribution</li>
+<li>Independent variables: any type</li>
+</ul>
+<div style="margin-bottom:70px;">
+
+</div>
+</div>
+<div id="negative-binomial-regression" class="section level2">
+<h2><a href="https://stats.idre.ucla.edu/r/dae/negative-binomial-regression/">Negative Binomial Regression</a></h2>
+<p>Negative binomial regression can be used for over-dispersed count data, that is when the conditional variance exceeds the conditional mean. It can be considered as a generalization of Poisson regression since it has the same mean structure as Poisson regression and it has an extra parameter to model the over-dispersion.</p>
+<ul>
+<li>Dependent variable: over-dispersed count</li>
+<li>Independent variables: any type</li>
+</ul>
+<div style="margin-bottom:70px;">
+
+</div>
+</div>
+<div id="tobit-regression" class="section level2">
+<h2><a href="https://stats.idre.ucla.edu/r/dae/tobit-models/">Tobit Regression</a></h2>
+<p>The tobit model, also called a censored regression model, is designed to estimate linear relationships between variables when there is either left- or right-censoring in the dependent variable (also known as censoring from below and above, respectively).</p>
+<p>Censoring from above takes place when cases with a value at or above some threshold, all take on the value of that threshold, so that the true value might be equal to the threshold, but it might also be higher.</p>
+<p>In the case of censoring from below, values those that fall at or below some threshold are censored.</p>
+<ul>
+<li>Dependent variable: continuous</li>
+<li>Independent variables: any type</li>
+</ul>
+<div style="margin-bottom:70px;">
+
+</div>
+</div>
+<div id="ordinal-regression" class="section level2">
+<h2><a href="https://stats.idre.ucla.edu/r/dae/ordinal-logistic-regression/">Ordinal Regression</a></h2>
+<p>Ordinal regression is a type of regression analysis used for predicting an ordinal variable, i.e. a variable whose value exists on an arbitrary scale where only the relative ordering between different values is significant.</p>
+<ul>
+<li>Dependent variable: ordinal</li>
+<li>Independent variables: any type</li>
+</ul>
+<div style="margin-bottom:70px;">
+
+</div>
+</div>
+<div id="polynomial-regression" class="section level2">
+<h2><a href="https://www.analyticsvidhya.com/blog/2021/07/all-you-need-to-know-about-polynomial-regression/">Polynomial Regression</a></h2>
+<p>Polynomial regression is a form of linear regression where only due to the non-linear relationship between the dependent and independent variables we add some polynomial terms to linear regression to convert it into a polynomial regression.</p>
+<ul>
+<li>Dependent variable: continuous</li>
+<li>Independent variables: any type</li>
+</ul>
+<div style="margin-bottom:70px;">
+
+</div>
+</div>
+<div id="quantile-regression" class="section level2">
+<h2><a href="https://www.mygreatlearning.com/blog/what-is-quantile-regression/">Quantile Regression</a></h2>
+<p>Quantile Regression is an econometric technique that is used when the necessary conditions to use Linear Regression are not duly met. It is an extension of Linear Regression analysis i.e., we can use it when outliers are present in data as its estimates strong against outliers as compared to linear regression.</p>
+<div style="margin-bottom:70px;">
+
+</div>
+</div>
+<div id="lasso-regression" class="section level2">
+<h2><a href="https://www.mygreatlearning.com/blog/understanding-of-lasso-regression/">Lasso Regression</a></h2>
+<p>Lasso regression is a regularization technique. It is used over regression methods for a more accurate prediction. This model uses shrinkage. Shrinkage is where data values are shrunk towards a central point as the mean. The lasso procedure encourages simple, sparse models (i.e. models with fewer parameters). This particular type of regression is well-suited for models showing high levels of multicollinearity.</p>
+<p>L1 regularization adds a penalty that is equal to the absolute value of the magnitude of the coefficient.</p>
+<div style="margin-bottom:70px;">
+
+</div>
+</div>
+<div id="ridge-regression" class="section level2">
+<h2><a href="https://www.mygreatlearning.com/blog/what-is-ridge-regression/">Ridge Regression</a></h2>
+<p>Ridge regression is a model tuning method that is used to analyse any data that suffers from multicollinearity. This method performs L2 regularization. When the issue of multicollinearity occurs, least-squares are unbiased, and variances are large, this results in predicted values to be far away from the actual values.</p>
+<p>L2 regularization adds a penalty L2 which is equal to the square of coefficients.</p>
+<div style="margin-bottom:70px;">
+
+</div>
+</div>
+<div id="elastic-net-regression" class="section level2">
+<h2><a href="http://www.sthda.com/english/articles/37-model-selection-essentials-in-r/153-penalized-regression-essentials-ridge-lasso-elastic-net/">Elastic Net Regression</a></h2>
+<p>Elastic Net first emerged as a result of critique on lasso, whose variable selection can be too dependent on data and thus unstable. The solution is to combine the penalties of ridge regression and lasso to get the best of both worlds.</p>
+<div style="margin-bottom:70px;">
+
+</div>
+</div>
+<div id="principle-components-regression-pcr" class="section level2">
+<h2><a href="https://online.stat.psu.edu/stat508/lesson/7/7.1">Principle components regression (PCR)</a></h2>
+<p>In principal components regression, we first perform principal components analysis (PCA) on the original data, then perform dimension reduction by selecting the number of principal components (m) using cross-validation or test set error, and finally conduct regression using the first m dimension reduced principal components.</p>
+<div style="margin-bottom:70px;">
+
+</div>
+</div>
+<div id="partial-least-regression-pls" class="section level2">
+<h2><a href="https://web.stanford.edu/~hastie/ISLR2/ISLRv2_website.pdf">Partial least regression (PLS)</a></h2>
+<p>Whereas in PCR the response variable, y, plays no role in identifying the principle component directions, in partial least squares (PLS), y supervises the identification of PLS directions</p>
+<div style="margin-bottom:70px;">
+
+</div>
+</div>
+</div>
+<div id="resources" class="section level1">
+<h1>Resources</h1>
+<ul>
+<li><a href="https://web.stanford.edu/~hastie/ISLR2/ISLRv2_website.pdf">An Introduction to Statistical Learning with Applications in R</a></li>
+<li><a href="https://stats.idre.ucla.edu/other/dae/">UCLA Statistical Consulting</a></li>
+<li><a href="https://topepo.github.io/caret/index.html">The <code>caret</code>package</a></li>
+</ul>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = false;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
